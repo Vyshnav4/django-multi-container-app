@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os # Import the os module to access environment variables
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-your-secret-key-goes-here' # Replace with a real secret key
+# Get the secret key from an environment variable.
+# The second argument is a default value used if the environment variable is not set.
+SECRET_KEY = os.environ.get('SECRET_KEY', 'default-insecure-secret-key-for-local-dev')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# The value is '1' in our docker-compose.yml file.
+# We check if the environment variable's value is '1' to set DEBUG to True.
+DEBUG = os.environ.get('DEBUG', '0') == '1'
 
-ALLOWED_HOSTS = []
+# We need to allow all hosts when running inside a Docker container,
+# or specify the domain name in production. '*' is a wildcard for all hosts.
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'polls.apps.PollsConfig', # Add our polls app here
+    'polls.apps.PollsConfig', # Our polls app
 ]
 
 MIDDLEWARE = [
@@ -74,10 +81,16 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# Replace the default SQLite configuration with PostgreSQL,
+# reading connection details from environment variables set by docker-compose.
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'), # This will be 'db', the service name in docker-compose
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 
@@ -117,6 +130,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# This tells Django where to collect all static files when we run collectstatic.
+# It's not strictly needed for development with Docker but is good practice.
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

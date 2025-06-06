@@ -61,16 +61,15 @@ Project Structure
 myproject/
 ├── .dockerignore              
 ├── docker-compose.yml         
-├── Dockerfile                 
-├── manage.py                  
+├── Dockerfile                
 ├── requirements.txt           
-├── myproject/                
+├── myproject/                 
 │   ├── __init__.py
 │   ├── asgi.py
-│   ├── settings.py           
+│   ├── settings.py            
 │   ├── urls.py
 │   └── wsgi.py
-└── polls/                    
+└── polls/                     
     ├── __init__.py
     ├── admin.py
     ├── apps.py
@@ -89,4 +88,3 @@ myproject/
             ├── detail.html
             ├── index.html
             └── results.html
-
