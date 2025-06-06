@@ -1,4 +1,4 @@
-#Django Polls with Docker Compose & PostgreSQL
+### Django Polls application with Docker Compose & PostgreSQL
 
 Description: A classic Django polling application fully orchestrated with Docker Compose.
 This project runs two separate services: a web container for the Django application and a db container for the PostgreSQL database,
